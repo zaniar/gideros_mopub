@@ -13,6 +13,7 @@ import com.mopub.mobileads.MoPubView.OnAdWillLoadListener;
 
 import android.app.Activity;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
@@ -52,6 +53,7 @@ public class GMoPub {
 		{
 			sData = 0;
 			removeBanner();
+			sInterstitial.destroy();
 			sInterstitial = null;
 			sInstance = null;
 		}
@@ -152,6 +154,42 @@ public class GMoPub {
 		catch(Exception ex){}
 	}
 	
+	public static void showBanner()
+	{
+		try
+		{
+			sActivity.get().runOnUiThread(new Runnable() {
+				
+				@Override
+				public void run() {
+					if(sAdView != null)
+					{
+						sAdView.setVisibility(View.VISIBLE);
+					}
+				}
+			});
+		}
+		catch(Exception ex){}
+	}
+	
+	public static void hideBanner()
+	{
+		try
+		{
+			sActivity.get().runOnUiThread(new Runnable() {
+				
+				@Override
+				public void run() {
+					if(sAdView != null)
+					{
+						sAdView.setVisibility(View.GONE);
+					}
+				}
+			});
+		}
+		catch(Exception ex){}
+	}
+	
 	public static String getAlignment()
 	{
 		return sCurAlignment;
@@ -159,11 +197,26 @@ public class GMoPub {
 	
 	public static void setAlignment(String alignment)
 	{
-		FrameLayout.LayoutParams adParams = new FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT ,
-                FrameLayout.LayoutParams.WRAP_CONTENT ,
-                sAlign.get(alignment));
-		sAdView.setLayoutParams(adParams);
+		sCurAlignment = alignment;
+		
+		if (sAdView == null) return;
+		
+		try
+		{
+			sActivity.get().runOnUiThread(new Runnable() {
+			
+				@Override
+				public void run() {
+					FrameLayout.LayoutParams adParams = new FrameLayout.LayoutParams(
+			                FrameLayout.LayoutParams.MATCH_PARENT ,
+			                FrameLayout.LayoutParams.WRAP_CONTENT ,
+			                sAlign.get(sCurAlignment));
+					sAdView.setLayoutParams(adParams);
+				}
+			});
+		
+		}
+		catch(Exception ex)	{}
 	}
 	
 	public static boolean getAutoRefresh()
@@ -185,6 +238,21 @@ public class GMoPub {
 				@Override
 				public void run() {
 					sInterstitial = new MoPubInterstitial(sActivity.get(), interstitialAdUnitId);
+					
+					sInterstitial.setListener(new MoPubInterstitialListener() {
+						
+						@Override
+						public void OnInterstitialLoaded() {
+							onInterstitialLoaded(sData);
+						}
+						
+						@Override
+						public void OnInterstitialFailed() {
+							onInterstitialFailed(sData);
+						}
+					});
+					
+					sInterstitial.load();
 				}
 			});
 		
@@ -194,28 +262,9 @@ public class GMoPub {
 	
 	public static void showInterstitial()
 	{
-		sInterstitial.setListener(new MoPubInterstitialListener() {
-			
-			@Override
-			public void OnInterstitialLoaded() {
-				if (sInterstitial.isReady()) {
-					sInterstitial.show();
-					onInterstitialLoaded(sData);
-				} else {
-				}
-			}
-			
-			@Override
-			public void OnInterstitialFailed() {
-				onInterstitialFailed(sData);
-			}
-			
-			public void OnInterstitialClosed() {
-				onInterstitialClosed(sData);
-			}
-		});
-		
-		sInterstitial.load();
+		if (sInterstitial.isReady()) {
+			sInterstitial.show();
+		}
 	}
 	
 	public static native void onAdWillLoad(long data);
