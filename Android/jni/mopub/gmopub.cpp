@@ -89,6 +89,20 @@ public:
 		env->CallStaticVoidMethod(cls_, env->GetStaticMethodID(cls_, "removeBanner", "()V"));
 	}
 
+	void showBanner()
+	{
+		JNIEnv *env = g_getJNIEnv();
+
+		env->CallStaticVoidMethod(cls_, env->GetStaticMethodID(cls_, "showBanner", "()V"));
+	}
+
+	void hideBanner()
+	{
+		JNIEnv *env = g_getJNIEnv();
+
+		env->CallStaticVoidMethod(cls_, env->GetStaticMethodID(cls_, "hideBanner", "()V"));
+	}
+
 	const char* getAlignment()
 	{
 		JNIEnv *env = g_getJNIEnv();
@@ -239,6 +253,16 @@ void gmopub_loadBanner(const char* adUnitId)
 void gmopub_removeBanner()
 {
 	s_mopub->removeBanner();
+}
+
+void gmopub_showBanner()
+{
+	s_mopub->showBanner();
+}
+
+void gmopub_hideBanner()
+{
+	s_mopub->hideBanner();
 }
 
 const char* gmopub_getAlignment()

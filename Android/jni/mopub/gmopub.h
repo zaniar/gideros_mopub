@@ -26,6 +26,8 @@ G_API void gmopub_cleanup();
 
 G_API void gmopub_loadBanner(const char* adUnitId);
 G_API void gmopub_removeBanner();
+G_API void gmopub_showBanner();
+G_API void gmopub_hideBanner();
 G_API const char* gmopub_getAlignment();
 G_API void gmopub_setAlignment(const char* alignment);
 G_API bool gmopub_getAutoRefresh();

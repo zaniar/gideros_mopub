@@ -66,6 +66,16 @@ public:
 		gmopub_removeBanner();
 	}
 
+	void showBanner()
+	{
+		gmopub_showBanner();
+	}
+
+	void hideBanner()
+	{
+		gmopub_hideBanner();
+	}
+
 	const char* getAlignment()
 	{
 		return gmopub_getAlignment();
@@ -202,6 +212,24 @@ static int removeBanner(lua_State *L)
 	return 0;
 }
 
+static int showBanner(lua_State *L)
+{
+	MoPub *mopub = getInstance(L, 1);
+
+	mopub->showBanner();
+
+	return 0;
+}
+
+static int hideBanner(lua_State *L)
+{
+	MoPub *mopub = getInstance(L, 1);
+
+	mopub->hideBanner();
+
+	return 0;
+}
+
 static int getAlignment(lua_State *L)
 {
 	MoPub *mopub = getInstance(L, 1);
@@ -267,6 +295,8 @@ static int loader(lua_State *L)
 	const luaL_Reg functionList[] = {
 		{"loadBanner", loadBanner},
 		{"removeBanner", removeBanner},
+		{"showBanner", showBanner},
+		{"hideBanner", hideBanner},
 		{"getAlignment", getAlignment},
 		{"setAlignment", setAlignment},
 		{"getAutoRefresh", getAutoRefresh},
